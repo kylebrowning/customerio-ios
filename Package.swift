@@ -34,7 +34,8 @@ if (ProcessInfo.processInfo.environment["CI"] != nil) { // true if running on a 
 let package = Package(
     name: "Customer.io",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v13),
+        .macOS(.v15),
     ],
     products: products,
     dependencies: [
