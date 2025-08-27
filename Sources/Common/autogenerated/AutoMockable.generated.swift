@@ -210,6 +210,11 @@ public class CustomerIOInstanceMock: CustomerIOInstance, Mock {
         registeredDeviceToken = nil
         registeredDeviceTokenGetCallsCount = 0
         registeredDeviceTokenSetCallsCount = 0
+        setProfileAttributesCallsCount = 0
+        setProfileAttributesReceivedArguments = nil
+        setProfileAttributesReceivedInvocations = []
+
+        mockCalled = false // do last as resetting properties above can make this true
         identifyCallsCount = 0
         identifyReceivedArguments = nil
         identifyReceivedInvocations = []
@@ -220,6 +225,11 @@ public class CustomerIOInstanceMock: CustomerIOInstance, Mock {
 
         mockCalled = false // do last as resetting properties above can make this true
         clearIdentifyCallsCount = 0
+
+        mockCalled = false // do last as resetting properties above can make this true
+        setDeviceAttributesCallsCount = 0
+        setDeviceAttributesReceivedArguments = nil
+        setDeviceAttributesReceivedInvocations = []
 
         mockCalled = false // do last as resetting properties above can make this true
         registerDeviceTokenCallsCount = 0
@@ -253,6 +263,33 @@ public class CustomerIOInstanceMock: CustomerIOInstance, Mock {
         trackMetricReceivedInvocations = []
 
         mockCalled = false // do last as resetting properties above can make this true
+    }
+
+    // MARK: - setProfileAttributes
+
+    /// Number of times the function was called.
+    @Atomic public private(set) var setProfileAttributesCallsCount = 0
+    /// `true` if the function was ever called.
+    public var setProfileAttributesCalled: Bool {
+        setProfileAttributesCallsCount > 0
+    }
+
+    /// The arguments from the *last* time the function was called.
+    @Atomic public private(set) var setProfileAttributesReceivedArguments: [String: Any]?
+    /// Arguments from *all* of the times that the function was called.
+    @Atomic public private(set) var setProfileAttributesReceivedInvocations: [[String: Any]] = []
+    /**
+     Set closure to get called when function gets called. Great way to test logic or return a value for the function.
+     */
+    public var setProfileAttributesClosure: (([String: Any]) -> Void)?
+
+    /// Mocked function for `setProfileAttributes(_ attributes: [String: Any])`. Your opportunity to return a mocked value and check result of mock in test code.
+    public func setProfileAttributes(_ attributes: [String: Any]) {
+        mockCalled = true
+        setProfileAttributesCallsCount += 1
+        setProfileAttributesReceivedArguments = attributes
+        setProfileAttributesReceivedInvocations.append(attributes)
+        setProfileAttributesClosure?(attributes)
     }
 
     // MARK: - identify
@@ -294,6 +331,7 @@ public class CustomerIOInstanceMock: CustomerIOInstance, Mock {
     public var identifyEncodableClosure: ((String, AnyEncodable) -> Void)?
 
     /// Mocked function for `identify<RequestBody: Codable>(userId: String, traits: RequestBody?)`. Your opportunity to return a mocked value and check result of mock in test code.
+    @available(*, deprecated, message: "Use 'identify(userId:traits:)' with [String: Any] traits parameter instead. Support for Codable traits will be removed in a future version.")
     public func identify<RequestBody: Codable>(userId: String, traits: RequestBody?) {
         mockCalled = true
         identifyCallsCount += 1
@@ -321,6 +359,33 @@ public class CustomerIOInstanceMock: CustomerIOInstance, Mock {
         mockCalled = true
         clearIdentifyCallsCount += 1
         clearIdentifyClosure?()
+    }
+
+    // MARK: - setDeviceAttributes
+
+    /// Number of times the function was called.
+    @Atomic public private(set) var setDeviceAttributesCallsCount = 0
+    /// `true` if the function was ever called.
+    public var setDeviceAttributesCalled: Bool {
+        setDeviceAttributesCallsCount > 0
+    }
+
+    /// The arguments from the *last* time the function was called.
+    @Atomic public private(set) var setDeviceAttributesReceivedArguments: [String: Any]?
+    /// Arguments from *all* of the times that the function was called.
+    @Atomic public private(set) var setDeviceAttributesReceivedInvocations: [[String: Any]] = []
+    /**
+     Set closure to get called when function gets called. Great way to test logic or return a value for the function.
+     */
+    public var setDeviceAttributesClosure: (([String: Any]) -> Void)?
+
+    /// Mocked function for `setDeviceAttributes(_ attributes: [String: Any])`. Your opportunity to return a mocked value and check result of mock in test code.
+    public func setDeviceAttributes(_ attributes: [String: Any]) {
+        mockCalled = true
+        setDeviceAttributesCallsCount += 1
+        setDeviceAttributesReceivedArguments = attributes
+        setDeviceAttributesReceivedInvocations.append(attributes)
+        setDeviceAttributesClosure?(attributes)
     }
 
     // MARK: - registerDeviceToken
@@ -410,6 +475,7 @@ public class CustomerIOInstanceMock: CustomerIOInstance, Mock {
     public var trackEncodableClosure: ((String, AnyEncodable) -> Void)?
 
     /// Mocked function for `track<RequestBody: Codable>(name: String, properties: RequestBody?)`. Your opportunity to return a mocked value and check result of mock in test code.
+    @available(*, deprecated, message: "Use 'track(name:properties:)' with [String: Any] properties parameter instead. Support for Codable properties will be removed in a future version.")
     public func track<RequestBody: Codable>(name: String, properties: RequestBody?) {
         mockCalled = true
         trackCallsCount += 1
@@ -457,6 +523,7 @@ public class CustomerIOInstanceMock: CustomerIOInstance, Mock {
     public var screenEncodableClosure: ((String, AnyEncodable) -> Void)?
 
     /// Mocked function for `screen<RequestBody: Codable>(title: String, properties: RequestBody?)`. Your opportunity to return a mocked value and check result of mock in test code.
+    @available(*, deprecated, message: "Use 'screen(title:properties:)' with [String: Any] properties parameter instead. Support for Codable properties will be removed in a future version.")
     public func screen<RequestBody: Codable>(title: String, properties: RequestBody?) {
         mockCalled = true
         screenCallsCount += 1

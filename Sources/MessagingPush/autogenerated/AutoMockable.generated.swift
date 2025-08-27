@@ -165,20 +165,6 @@ public class MessagingPushInstanceMock: MessagingPushInstance, Mock {
         #endif
 
         mockCalled = false // do last as resetting properties above can make this true
-        #if canImport(UserNotifications)
-        userNotificationCenter_withCompletionCallsCount = 0
-        userNotificationCenter_withCompletionReceivedArguments = nil
-        userNotificationCenter_withCompletionReceivedInvocations = []
-        #endif
-
-        mockCalled = false // do last as resetting properties above can make this true
-        #if canImport(UserNotifications)
-        userNotificationCenterCallsCount = 0
-        userNotificationCenterReceivedArguments = nil
-        userNotificationCenterReceivedInvocations = []
-        #endif
-
-        mockCalled = false // do last as resetting properties above can make this true
     }
 
     // MARK: - registerDeviceToken
@@ -310,72 +296,6 @@ public class MessagingPushInstanceMock: MessagingPushInstance, Mock {
         mockCalled = true
         serviceExtensionTimeWillExpireCallsCount += 1
         serviceExtensionTimeWillExpireClosure?()
-    }
-    #endif
-
-    // MARK: - userNotificationCenter
-
-    #if canImport(UserNotifications)
-    /// Number of times the function was called.
-    @Atomic public private(set) var userNotificationCenter_withCompletionCallsCount = 0
-    /// `true` if the function was ever called.
-    public var userNotificationCenter_withCompletionCalled: Bool {
-        userNotificationCenter_withCompletionCallsCount > 0
-    }
-
-    /// The arguments from the *last* time the function was called.
-    @Atomic public private(set) var userNotificationCenter_withCompletionReceivedArguments: (center: UNUserNotificationCenter, response: UNNotificationResponse, completionHandler: () -> Void)?
-    /// Arguments from *all* of the times that the function was called.
-    @Atomic public private(set) var userNotificationCenter_withCompletionReceivedInvocations: [(center: UNUserNotificationCenter, response: UNNotificationResponse, completionHandler: () -> Void)] = []
-    /// Value to return from the mocked function.
-    public var userNotificationCenter_withCompletionReturnValue: Bool!
-    /**
-     Set closure to get called when function gets called. Great way to test logic or return a value for the function.
-     The closure has first priority to return a value for the mocked function. If the closure returns `nil`,
-     then the mock will attempt to return the value for `userNotificationCenter_withCompletionReturnValue`
-     */
-    public var userNotificationCenter_withCompletionClosure: ((UNUserNotificationCenter, UNNotificationResponse, @escaping () -> Void) -> Bool)?
-
-    /// Mocked function for `userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void)`. Your opportunity to return a mocked value and check result of mock in test code.
-    public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) -> Bool {
-        mockCalled = true
-        userNotificationCenter_withCompletionCallsCount += 1
-        userNotificationCenter_withCompletionReceivedArguments = (center: center, response: response, completionHandler: completionHandler)
-        userNotificationCenter_withCompletionReceivedInvocations.append((center: center, response: response, completionHandler: completionHandler))
-        return userNotificationCenter_withCompletionClosure.map { $0(center, response, completionHandler) } ?? userNotificationCenter_withCompletionReturnValue
-    }
-    #endif
-
-    // MARK: - userNotificationCenter
-
-    #if canImport(UserNotifications)
-    /// Number of times the function was called.
-    @Atomic public private(set) var userNotificationCenterCallsCount = 0
-    /// `true` if the function was ever called.
-    public var userNotificationCenterCalled: Bool {
-        userNotificationCenterCallsCount > 0
-    }
-
-    /// The arguments from the *last* time the function was called.
-    @Atomic public private(set) var userNotificationCenterReceivedArguments: (center: UNUserNotificationCenter, response: UNNotificationResponse)?
-    /// Arguments from *all* of the times that the function was called.
-    @Atomic public private(set) var userNotificationCenterReceivedInvocations: [(center: UNUserNotificationCenter, response: UNNotificationResponse)] = []
-    /// Value to return from the mocked function.
-    public var userNotificationCenterReturnValue: CustomerIOParsedPushPayload?
-    /**
-     Set closure to get called when function gets called. Great way to test logic or return a value for the function.
-     The closure has first priority to return a value for the mocked function. If the closure returns `nil`,
-     then the mock will attempt to return the value for `userNotificationCenterReturnValue`
-     */
-    public var userNotificationCenterClosure: ((UNUserNotificationCenter, UNNotificationResponse) -> CustomerIOParsedPushPayload?)?
-
-    /// Mocked function for `userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse)`. Your opportunity to return a mocked value and check result of mock in test code.
-    public func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) -> CustomerIOParsedPushPayload? {
-        mockCalled = true
-        userNotificationCenterCallsCount += 1
-        userNotificationCenterReceivedArguments = (center: center, response: response)
-        userNotificationCenterReceivedInvocations.append((center: center, response: response))
-        return userNotificationCenterClosure.map { $0(center, response) } ?? userNotificationCenterReturnValue
     }
     #endif
 }
@@ -826,6 +746,16 @@ class PushNotificationLoggerMock: PushNotificationLogger, Mock {
         logPushMetricsAutoTrackingDisabledCallsCount = 0
 
         mockCalled = false // do last as resetting properties above can make this true
+        logPushMetricTrackedCallsCount = 0
+        logPushMetricTrackedReceivedArguments = nil
+        logPushMetricTrackedReceivedInvocations = []
+
+        mockCalled = false // do last as resetting properties above can make this true
+        logPushMetricTrackingFailedCallsCount = 0
+        logPushMetricTrackingFailedReceivedArguments = nil
+        logPushMetricTrackingFailedReceivedInvocations = []
+
+        mockCalled = false // do last as resetting properties above can make this true
         logClickedPushMessageCallsCount = 0
         logClickedPushMessageReceivedArguments = nil
         logClickedPushMessageReceivedInvocations = []
@@ -985,6 +915,60 @@ class PushNotificationLoggerMock: PushNotificationLogger, Mock {
         logPushMetricsAutoTrackingDisabledClosure?()
     }
 
+    // MARK: - logPushMetricTracked
+
+    /// Number of times the function was called.
+    @Atomic private(set) var logPushMetricTrackedCallsCount = 0
+    /// `true` if the function was ever called.
+    var logPushMetricTrackedCalled: Bool {
+        logPushMetricTrackedCallsCount > 0
+    }
+
+    /// The arguments from the *last* time the function was called.
+    @Atomic private(set) var logPushMetricTrackedReceivedArguments: (deliveryId: String, event: String)?
+    /// Arguments from *all* of the times that the function was called.
+    @Atomic private(set) var logPushMetricTrackedReceivedInvocations: [(deliveryId: String, event: String)] = []
+    /**
+     Set closure to get called when function gets called. Great way to test logic or return a value for the function.
+     */
+    var logPushMetricTrackedClosure: ((String, String) -> Void)?
+
+    /// Mocked function for `logPushMetricTracked(deliveryId: String, event: String)`. Your opportunity to return a mocked value and check result of mock in test code.
+    func logPushMetricTracked(deliveryId: String, event: String) {
+        mockCalled = true
+        logPushMetricTrackedCallsCount += 1
+        logPushMetricTrackedReceivedArguments = (deliveryId: deliveryId, event: event)
+        logPushMetricTrackedReceivedInvocations.append((deliveryId: deliveryId, event: event))
+        logPushMetricTrackedClosure?(deliveryId, event)
+    }
+
+    // MARK: - logPushMetricTrackingFailed
+
+    /// Number of times the function was called.
+    @Atomic private(set) var logPushMetricTrackingFailedCallsCount = 0
+    /// `true` if the function was ever called.
+    var logPushMetricTrackingFailedCalled: Bool {
+        logPushMetricTrackingFailedCallsCount > 0
+    }
+
+    /// The arguments from the *last* time the function was called.
+    @Atomic private(set) var logPushMetricTrackingFailedReceivedArguments: (deliveryId: String, event: String, error: Error)?
+    /// Arguments from *all* of the times that the function was called.
+    @Atomic private(set) var logPushMetricTrackingFailedReceivedInvocations: [(deliveryId: String, event: String, error: Error)] = []
+    /**
+     Set closure to get called when function gets called. Great way to test logic or return a value for the function.
+     */
+    var logPushMetricTrackingFailedClosure: ((String, String, Error) -> Void)?
+
+    /// Mocked function for `logPushMetricTrackingFailed(deliveryId: String, event: String, error: Error)`. Your opportunity to return a mocked value and check result of mock in test code.
+    func logPushMetricTrackingFailed(deliveryId: String, event: String, error: Error) {
+        mockCalled = true
+        logPushMetricTrackingFailedCallsCount += 1
+        logPushMetricTrackingFailedReceivedArguments = (deliveryId: deliveryId, event: event, error: error)
+        logPushMetricTrackingFailedReceivedInvocations.append((deliveryId: deliveryId, event: event, error: error))
+        logPushMetricTrackingFailedClosure?(deliveryId, event, error)
+    }
+
     // MARK: - logClickedPushMessage
 
     /// Number of times the function was called.
@@ -1100,6 +1084,57 @@ class PushNotificationLoggerMock: PushNotificationLogger, Mock {
         logTrackingPushMessageOpenedReceivedArguments = deliveryId
         logTrackingPushMessageOpenedReceivedInvocations.append(deliveryId)
         logTrackingPushMessageOpenedClosure?(deliveryId)
+    }
+}
+
+/**
+ Class to easily create a mocked version of the `RichPushDeliveryTracker` class.
+ This class is equipped with functions and properties ready for you to mock!
+
+ Note: This file is automatically generated. This means the mocks should always be up-to-date and has a consistent API.
+ See the SDK documentation to learn the basics behind using the mock classes in the SDK.
+ */
+class RichPushDeliveryTrackerMock: RichPushDeliveryTracker, Mock {
+    /// If *any* interactions done on mock. `true` if any method or property getter/setter called.
+    var mockCalled: Bool = false //
+
+    init() {
+        Mocks.shared.add(mock: self)
+    }
+
+    public func resetMock() {
+        trackMetricCallsCount = 0
+        trackMetricReceivedArguments = nil
+        trackMetricReceivedInvocations = []
+
+        mockCalled = false // do last as resetting properties above can make this true
+    }
+
+    // MARK: - trackMetric
+
+    /// Number of times the function was called.
+    @Atomic private(set) var trackMetricCallsCount = 0
+    /// `true` if the function was ever called.
+    var trackMetricCalled: Bool {
+        trackMetricCallsCount > 0
+    }
+
+    /// The arguments from the *last* time the function was called.
+    @Atomic private(set) var trackMetricReceivedArguments: (token: String, event: Metric, deliveryId: String, timestamp: String?, onComplete: (Result<Void, HttpRequestError>) -> Void)?
+    /// Arguments from *all* of the times that the function was called.
+    @Atomic private(set) var trackMetricReceivedInvocations: [(token: String, event: Metric, deliveryId: String, timestamp: String?, onComplete: (Result<Void, HttpRequestError>) -> Void)] = []
+    /**
+     Set closure to get called when function gets called. Great way to test logic or return a value for the function.
+     */
+    var trackMetricClosure: ((String, Metric, String, String?, @escaping (Result<Void, HttpRequestError>) -> Void) -> Void)?
+
+    /// Mocked function for `trackMetric(token: String, event: Metric, deliveryId: String, timestamp: String?, onComplete: @escaping (Result<Void, HttpRequestError>) -> Void)`. Your opportunity to return a mocked value and check result of mock in test code.
+    func trackMetric(token: String, event: Metric, deliveryId: String, timestamp: String?, onComplete: @escaping (Result<Void, HttpRequestError>) -> Void) {
+        mockCalled = true
+        trackMetricCallsCount += 1
+        trackMetricReceivedArguments = (token: token, event: event, deliveryId: deliveryId, timestamp: timestamp, onComplete: onComplete)
+        trackMetricReceivedInvocations.append((token: token, event: event, deliveryId: deliveryId, timestamp: timestamp, onComplete: onComplete))
+        trackMetricClosure?(token, event, deliveryId, timestamp, onComplete)
     }
 }
 

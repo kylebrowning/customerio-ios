@@ -238,9 +238,6 @@ class CioProviderAgnosticAppDelegateTests: XCTestCase {
     }
 
     func testUserNotificationCenterDidReceive_whenNotificationCenterIntegrationIsEnabled_thenWrappedDelegateAndMessagingPushAreCalled() {
-        // Configure mock return value
-        mockMessagingPush.userNotificationCenterReturnValue = nil
-
         var completionHandlerCalled = false
         let completionHandler = {
             completionHandlerCalled = true
@@ -251,7 +248,6 @@ class CioProviderAgnosticAppDelegateTests: XCTestCase {
         appDelegate.userNotificationCenter(UNUserNotificationCenter.current(), didReceive: UNNotificationResponse.testInstance, withCompletionHandler: completionHandler)
 
         // Verify behavior
-        XCTAssertTrue(mockMessagingPush.userNotificationCenterCalled)
         XCTAssertTrue(mockNotificationCenterDelegate.didReceiveNotificationResponseCalled)
         XCTAssertTrue(completionHandlerCalled)
     }
@@ -265,7 +261,6 @@ class CioProviderAgnosticAppDelegateTests: XCTestCase {
             config: { self.createMockConfig(autoTrackPushEvents: false) },
             logger: mockLogger
         )
-        mockMessagingPush.userNotificationCenterReturnValue = nil
         var completionHandlerCalled = false
         let completionHandler = {
             completionHandlerCalled = true
@@ -334,5 +329,29 @@ class CioProviderAgnosticAppDelegateTests: XCTestCase {
         // Verify behavior
         XCTAssertTrue(mockAppDelegate.continueUserActivityCalled)
         XCTAssertTrue(result)
+    }
+
+    func testApplicationOpenUrl_whenCalled_thenWrappedDelegateIsCalled() {
+        // Setup
+        let testUrl = URL(string: "myapp://deeplink")!
+        let testOptions: [UIApplication.OpenURLOptionsKey: Any] = [.sourceApplication: "com.test.app"]
+
+        // Call the method
+        let result = appDelegate.application(UIApplication.shared, open: testUrl, options: testOptions)
+
+        // Verify behavior
+        XCTAssertTrue(mockAppDelegate.openUrlCalled)
+        XCTAssertEqual(mockAppDelegate.urlReceived, testUrl)
+        XCTAssertEqual(mockAppDelegate.optionsReceived?[.sourceApplication] as? String, "com.test.app")
+        XCTAssertTrue(result)
+    }
+
+    func testRespondsToApplicationOpenUrl_whenSelectorIsInImplementedMethods_thenReturnsTrue() {
+        // Test that the app delegate responds to the URL opening selector
+        let urlSelector = #selector(UIApplicationDelegate.application(_:open:options:))
+        XCTAssertTrue(appDelegate.responds(to: urlSelector), "AppDelegate should respond to application(_:open:options:) selector")
+
+        // More importantly, test that it's handled by CioAppDelegate itself, not just forwarded
+        XCTAssertEqual(appDelegate.forwardingTarget(for: urlSelector) as? CioProviderAgnosticAppDelegate, appDelegate, "URL handling should be handled by CioAppDelegate, not forwarded to wrapped delegate")
     }
 }

@@ -31,6 +31,7 @@ open class CioProviderAgnosticAppDelegate: CioAppDelegateType, UNUserNotificatio
         #selector(UIApplicationDelegate.application(_:didRegisterForRemoteNotificationsWithDeviceToken:)),
         #selector(UIApplicationDelegate.application(_:didFailToRegisterForRemoteNotificationsWithError:)),
         #selector(UIApplicationDelegate.application(_:continue:restorationHandler:)),
+        #selector(UIApplicationDelegate.application(_:open:options:)),
         // UNUserNotificationCenterDelegate
         #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:willPresent:withCompletionHandler:)),
         #selector(UNUserNotificationCenterDelegate.userNotificationCenter(_:didReceive:withCompletionHandler:)),
@@ -153,7 +154,10 @@ open class CioProviderAgnosticAppDelegate: CioAppDelegateType, UNUserNotificatio
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        _ = messagingPush.userNotificationCenter(center, didReceive: response)
+        // Cast to concrete type since method was removed from protocol
+        if let implementation = messagingPush as? MessagingPush {
+            _ = implementation.userNotificationCenter(center, didReceive: response)
+        }
 
         // `completionHandlerCalled` is used to overcome limitation of `responds(to:)` when working with optional methods from protocol.
         // Component may implement the protocol, but not specific optional method. In this case `responds(to:)` will return true.
@@ -213,5 +217,13 @@ extension CioProviderAgnosticAppDelegate {
     @objc
     open func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([any UIUserActivityRestoring]?) -> Void) -> Bool {
         wrappedAppDelegate?.application?(application, continue: userActivity, restorationHandler: restorationHandler) ?? false
+    }
+
+    open func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        wrappedAppDelegate?.application?(app, open: url, options: options) ?? false
     }
 }

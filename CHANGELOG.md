@@ -1,3 +1,21 @@
+## [3.13.1](https://github.com/customerio/customerio-ios/compare/3.13.0...3.13.1) (2025-08-27)
+
+### Bug Fixes
+
+* build issues on xcode 26 beta ([#949](https://github.com/customerio/customerio-ios/issues/949)) ([f5674b5](https://github.com/customerio/customerio-ios/commit/f5674b5ef7eedcbe9f8512a654e8fc0b773b8447))
+
+## [3.13.0](https://github.com/customerio/customerio-ios/compare/3.12.0...3.13.0) (2025-08-21)
+
+### Features
+
+* Align public API with other CIO SDK platforms ([#948](https://github.com/customerio/customerio-ios/issues/948)) ([b63efd7](https://github.com/customerio/customerio-ios/commit/b63efd789f27afe803a879e500ed28fabb344f14))
+
+## [3.12.0](https://github.com/customerio/customerio-ios/compare/3.11.0...3.12.0) (2025-08-18)
+
+### Features
+
+* Added support for queue sticky sessions ([#946](https://github.com/customerio/customerio-ios/issues/946)) ([4b42003](https://github.com/customerio/customerio-ios/commit/4b420032758794ed2874aa921e1907452a29c9d6))
+
 ## [3.11.0](https://github.com/customerio/customerio-ios/compare/3.10.9...3.11.0) (2025-07-22)
 
 ### Features
